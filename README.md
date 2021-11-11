@@ -9,7 +9,7 @@ The target server is an **InfluxDB**. The data from multiple probes can be easil
 
 ## Install ##
 
-# Dependencies #
+### Dependencies ###
 
 [HTTP API](https://github.com/influxdata/influxdb-python)
 
@@ -19,4 +19,4 @@ configure with **config.yaml** file
 
 ## Run ##
 
-# Run on boot (Linux) #
+### Run on boot (Linux) ###
