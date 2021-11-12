@@ -6,6 +6,8 @@
 import os
 import time
 from queue import Queue, Empty
+import sender
+
 
 class Probe():
 
@@ -17,11 +19,13 @@ class Probe():
         self.count = 1
         self.time_interval = 2
         self.detection_debth = 3
+        self.event_queue = Queue(4000)
 
     def run_probes(self):
         for ip in self.ip_list:
             result = self.ping(ip)
-            print(result)
+            # print(result)
+
         time.sleep(self.time_interval)
 
     def ping(self, ip):
@@ -76,9 +80,21 @@ class Probe():
 def test():
     probe = Probe()
 
+    # Creates the sender thread and gices it access to the event queue
+    sende_thread = sender.Sender(probe.event_queue)
+    sende_thread.daemon=True
+
+    # Runs a network discovery
     ips = probe.detect_network()
+
+    # Adds discovered nodes to IP list to be pinged
+    print("Probe will ping the selected IPs")
     probe.add_ips(ips)
-    print(ips)
+    for ip in ips:
+        print(ip)
+    print("\n")
+
+    # Starts pinging target IPs
     for i in range(3):
         probe.run_probes()
 
