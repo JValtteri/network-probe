@@ -10,6 +10,7 @@ class Probe():
         self.ip_list = ['1.1.1.1', '1.0.0.1']
         self.count = 1
         self.time_interval = 2
+        self.detection_debth = 3
 
     def run_probes(self):
         for ip in self.ip_list:
@@ -40,15 +41,17 @@ class Probe():
     def detect_network(self):
         "Trace the first nodes of the network"
         trace_ips = []
-        response = os.popen(f"pathping -q 1 1.1.1.1").readlines()
+        response = os.popen(f"pathping -q 1 -h {self.detection_debth} 1.1.1.1").readlines()
         for line in response:
-            if len(line) > 3 and line[2] in ["1", "2", "3"]:
+            if len(line) > 3 and int(line[2]) in range(self.detection_debth):
                 trace_ip = line.rsplit("[")[1][0:-3]
                 print(trace_ip)
-
+                if line[2] == str(self.detection_debth):
+                    break
 
 if __name__ == "__main__":
     probe = Probe()
+
+    probe.detect_network()
     for i in range(3):
         probe.run_probes()
-    # probe.detect_network()
