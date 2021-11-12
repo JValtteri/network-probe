@@ -1,5 +1,11 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+# J.V.Ojala 12.11.2021
+# network-probe
+
 import os
 import time
+from queue import Queue, Empty
 
 class Probe():
 
@@ -41,17 +47,40 @@ class Probe():
     def detect_network(self):
         "Trace the first nodes of the network"
         trace_ips = []
+        str_range = self.str_range( range( 1, self.detection_debth + 1 ) )
         response = os.popen(f"pathping -q 1 -h {self.detection_debth} 1.1.1.1").readlines()
         for line in response:
-            if len(line) > 3 and int(line[2]) in range(self.detection_debth):
+            # Get the first X IPs on the trace and put them in a LIST: trace_ips
+            if len(line) > 3 and line[2] in str_range:
                 trace_ip = line.rsplit("[")[1][0:-3]
-                print(trace_ip)
+                trace_ips.append(trace_ip)
+                # print(trace_ip)
                 if line[2] == str(self.detection_debth):
-                    break
+                    return trace_ips
 
-if __name__ == "__main__":
+    def add_ips(self, ip_list):
+        'add an IP LIST to the probe ip list'
+        for ip in ip_list:
+            self.ip_list.append(ip)
+
+    @staticmethod
+    def str_range(the_range):
+        'conver range() to STR'
+        str_list = []
+        for i in the_range:
+            str_list.append( str(i) )
+        return str_list
+
+
+
+def test():
     probe = Probe()
 
-    probe.detect_network()
+    ips = probe.detect_network()
+    probe.add_ips(ips)
+    print(ips)
     for i in range(3):
         probe.run_probes()
+
+if __name__ == "__main__":
+    test()
