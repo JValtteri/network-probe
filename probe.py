@@ -96,10 +96,10 @@ class Probe():
     def ping(self, ip):
         """
         returns:
-        {"target": IP, "up": 1 or 0, "time": POSIX(ms)}
+        {"target": IP, "up": 1 or 0, "time": POSIX(µs)}
         """
 
-        posix = round( time.time() * 1000 )
+        posix = round( time.time() * 1000 * 1000 )
         response = os.popen(f"ping -n {self.ping_count} {ip}").read()
         if (f"Received = {self.ping_count}") in response:
             up = 1
