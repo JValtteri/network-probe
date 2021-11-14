@@ -30,9 +30,9 @@ class Probe():
         self.queue_debth = self.settings["event_queue"]
         self.event_queue = Queue(self.queue_debth)
 
-        self.db_name = ""
-        self.db_user = ""
-        self.db_password = ""
+        self.db_name = self.settings["db_name"]
+        self.db_user = self.settings["db_user"]
+        self.db_password = self.settings["db_password"]
 
         # Creates the sender_thread
         self.sender_thread = Sender(self.event_queue)
