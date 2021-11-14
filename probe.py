@@ -5,6 +5,7 @@
 
 import json
 import os
+import queue
 import time
 from queue import Queue, Empty
 from sender import Sender
@@ -18,7 +19,6 @@ logger = Logger(__name__)
 class Probe():
 
     def __init__(self):
-
 
         self.settings = self.load_config(0)
         self.body = [self.load_config(1)]
@@ -35,10 +35,22 @@ class Probe():
         self.db_name = self.settings["db_name"]
         self.db_user = self.settings["db_user"]
         self.db_password = self.settings["db_password"]
+        self.host = self.settings["db_host"]
+        self.port = self.settings["db_port"]
 
         # Creates the sender_thread
-        self.sender_thread = Sender(self.event_queue, self.body, self.db_name, self.db_user, self.db_password)
+        self.sender_thread = Sender(self.event_queue, self.body, self.db_name, self.db_user, self.db_password, self.host, self.port)
         self.sender_thread.daemon=True
+
+        # LOG THE CONFIGURATION
+        logger.info("Loaded configuration")
+        logger.info("ID: {}".format(self.id))
+        logger.info("Name: {}".format(self.name))
+        logger.info("IP list: {}".format(self.ip_list))
+        logger.info("Ping count: {}".format(self.ping_count))
+        logger.info("Time interval {} s".format(self.time_interval))
+        logger.info("Detection debth: {}".format(self.detection_debth))
+        logger.info("Queue debth: {}".format(self.queue_debth))
 
 
     def load_config(self, index=0):
@@ -63,15 +75,19 @@ class Probe():
         return settings
 
     def run_probes(self):
+        """Run ping for each adress in ip_list"""
         for ip in self.ip_list:
             result = self.ping(ip)
 
             # PUT RESULT TO QUEUE
-            self.event_queue.put(result)
+            try:
+                self.event_queue.put(result)
+            except queue.Full:
+                logger.error("queue.FULL")
 
             # IF NO THREAD IS ACTIBE, RESTART THE THREAD
             if not self.sender_thread.is_alive():
-                self.sender_thread = Sender(self.event_queue, self.body, self.db_name, self.db_user, self.db_password)
+                self.sender_thread = Sender(self.event_queue, self.body, self.db_name, self.db_user, self.db_password, self.host, self.port)
                 self.sender_thread.daemon=True
                 self.sender_thread.start()
 
@@ -80,10 +96,10 @@ class Probe():
     def ping(self, ip):
         """
         returns:
-        {"target": IP, "up": 1 or 0, "timestamp": POSIX(ms)}
+        {"target": IP, "up": 1 or 0, "time": POSIX(ms)}
         """
 
-        posix = time.time() * 1000
+        posix = round( time.time() * 1000 )
         response = os.popen(f"ping -n {self.ping_count} {ip}").read()
         if (f"Received = {self.ping_count}") in response:
             up = 1
@@ -93,7 +109,7 @@ class Probe():
         result = {
             "target": ip,
             "up": up,
-            "timestamp": posix
+            "time": posix
         }
         return result
 
@@ -129,7 +145,6 @@ class Probe():
         return str_list
 
 
-
 def test():
     probe = Probe()
 
@@ -139,7 +154,7 @@ def test():
     # Adds discovered nodes to IP list to be pinged
     logger.info("Probe will ping the selected IPs")
     probe.add_ips(ips)
-    for ip in ips:
+    for ip in probe.ip_list:
         logger.info(ip)
     print("\n")
 

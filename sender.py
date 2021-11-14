@@ -6,7 +6,7 @@
 import time
 import json
 import threading
-# from influxdb import InfluxDBClient
+from influxdb import InfluxDBClient
 from logger import Logger
 logger = Logger(__name__)
 
@@ -14,11 +14,14 @@ logger = Logger(__name__)
 class Sender(threading.Thread):
     '''A thread to send the ping analytics.'''
 
-    def __init__(self, event_queue, body, db_name, db_user, db_password, daemon=True):
+    def __init__(self, event_queue, body, db_name, db_user, db_password, db_host, db_port, daemon=True):
 
         threading.Thread.__init__(self)
         self.event_queue = event_queue
         self.body = body
+
+        self.host = db_host
+        self.port = db_port
         self.db_name = db_name
         self.db_user = db_user
         self.db_password = db_password
@@ -48,11 +51,13 @@ class Sender(threading.Thread):
         message = self.body
         message[0]["tags"]["target"] = item["target"]
         message[0]["fields"]["up"] = item["up"]
-        message[0]["time"] = round(item["timestamp"])
+        message[0]["time"] = round(item["time"])
 
         return message
 
 
     def send(self, message):
         logger.debug(f"Message: {message}")
-
+        # client = InfluxDBClient(self.host, self.port, self.db_user, self.db_password, database=self.db_name, ssl=True)
+        # client.write_points(message)
+        # client.close()
