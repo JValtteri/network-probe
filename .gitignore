@@ -6,3 +6,5 @@ __*
 build/*
 # *.spec
 probe/*
+*.log
+*.yaml

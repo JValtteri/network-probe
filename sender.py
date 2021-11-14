@@ -5,6 +5,9 @@
 
 import time
 import threading
+from logger import Logger
+logger = Logger(__name__)
+
 
 class Sender(threading.Thread):
     '''A thread to send the ping analytics.'''
@@ -16,12 +19,15 @@ class Sender(threading.Thread):
 
 
     def run(self):
-
+        logger.debug("Sender thread STARTED")
+        size = self.event_queue.qsize()
+        logger.debug(f"Queue size: {size}")
         item = self.event_queue.get()
         sent = False
 
-        while sent is False:
+        self.event_queue
 
+        while sent is False:
             # try:
             self.send(item)
             # except Error:
@@ -29,6 +35,8 @@ class Sender(threading.Thread):
             # else:
             sent = True
 
-    def send(item):
-        print(item)
+        logger.debug("Sentder thread CLOSED")
 
+    @staticmethod
+    def send(item):
+        logger.info(f"Sent: {item}")

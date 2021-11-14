@@ -6,7 +6,13 @@
 import os
 import time
 from queue import Queue, Empty
-import sender
+from sender import Sender
+
+# LOGGING
+filename = 'probe.log'
+open(filename, 'w').close()     # Creates an empty log file
+from logger import Logger
+logger = Logger(__name__)
 
 
 class Probe():
@@ -21,10 +27,20 @@ class Probe():
         self.detection_debth = 3
         self.event_queue = Queue(4000)
 
+        # Creates the sender_thread
+        self.sender_thread = Sender(self.event_queue)
+        self.sender_thread.daemon=True
+
     def run_probes(self):
         for ip in self.ip_list:
             result = self.ping(ip)
-            # print(result)
+            # PUT RESULT TO QUEUE
+            self.event_queue.put(result)
+            # IF NO THREAD IS ACTIBE, RESTART THE THREAD
+            if not self.sender_thread.is_alive():
+                self.sender_thread = Sender(self.event_queue)
+                self.sender_thread.daemon=True
+                self.sender_thread.start()
 
         time.sleep(self.time_interval)
 
@@ -80,18 +96,14 @@ class Probe():
 def test():
     probe = Probe()
 
-    # Creates the sender thread and gices it access to the event queue
-    sende_thread = sender.Sender(probe.event_queue)
-    sende_thread.daemon=True
-
     # Runs a network discovery
     ips = probe.detect_network()
 
     # Adds discovered nodes to IP list to be pinged
-    print("Probe will ping the selected IPs")
+    logger.info("Probe will ping the selected IPs")
     probe.add_ips(ips)
     for ip in ips:
-        print(ip)
+        logger.info(ip)
     print("\n")
 
     # Starts pinging target IPs
