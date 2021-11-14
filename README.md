@@ -16,7 +16,7 @@ The target server is an **InfluxDB**. The data from multiple probes can be easil
 ### In progress ###
 
 - ~~Config with config.json~~
-  - Example config
+  - ~~Example config~~
 - Implementing **[InfluxDB HTTP API](https://github.com/influxdata/influxdb-python)**
 - lots of testing
 

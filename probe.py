@@ -15,7 +15,6 @@ open(filename, 'w').close()     # Creates an empty log file
 from logger import Logger
 logger = Logger(__name__)
 
-
 class Probe():
 
     def __init__(self):
@@ -30,6 +29,10 @@ class Probe():
         self.detection_debth = self.settings["detection_debth"]
         self.queue_debth = self.settings["event_queue"]
         self.event_queue = Queue(self.queue_debth)
+
+        self.db_name = ""
+        self.db_user = ""
+        self.db_password = ""
 
         # Creates the sender_thread
         self.sender_thread = Sender(self.event_queue)
@@ -46,15 +49,14 @@ class Probe():
 
         try:
             configfile = open(filename, 'r')
-            configtext = configfile.read()
-            print(configtext)
+            config = configfile.read()
+            configfile.close()
         except FileNotFoundError:
             self.logger.critical("Error: Could not find %s" % filename)
             exit()
 
-        json_file = json.loads(configtext)
+        json_file = json.loads(config)
         settings = json_file[0]
-        configfile.close()
         self.body = [json_file[1]]
 
         return settings

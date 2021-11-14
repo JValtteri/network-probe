@@ -1,0 +1,30 @@
+[
+    {
+        "name": "aProbe",
+        "id": 0,
+        "targets": [
+            "1.1.1.1",
+            "1.0.0.1",
+            "google.com"
+        ],
+        "time_interval": 2,
+        "ping_count": 1,
+        "detection_debth": 3,
+        "event_queue": 4000,
+        "db_name": "db",
+        "db_user": "user",
+        "db_password": "p455w0rd"
+    },
+    {
+        "measurement": "ping",
+        "tags": {
+            "target": "",
+            "name": "Test",
+            "id": 0
+        },
+        "time": 0,
+        "fields": {
+            "up": 1
+        }
+    }
+]
