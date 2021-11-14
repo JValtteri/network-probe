@@ -14,10 +14,14 @@ logger = Logger(__name__)
 class Sender(threading.Thread):
     '''A thread to send the ping analytics.'''
 
-    def __init__(self, event_queue, daemon=True):
+    def __init__(self, event_queue, body, db_name, db_user, db_password, daemon=True):
 
         threading.Thread.__init__(self)
         self.event_queue = event_queue
+        self.body = body
+        self.db_name = db_name
+        self.db_user = db_user
+        self.db_password = db_password
 
 
     def run(self):
@@ -29,7 +33,9 @@ class Sender(threading.Thread):
         sent = False
         while sent is False:
             # try:
-            self.send( json.dumps(item) )
+            message = self.message_map(item)
+            self.send( json.dumps(message) )
+            logger.info(f"Sent: {item}")
             # except Error:
             #     timee.sleep(1)
             # else:
@@ -37,6 +43,16 @@ class Sender(threading.Thread):
 
         logger.debug("Sentder thread CLOSED")
 
-    @staticmethod
-    def send(item):
-        logger.info(f"Sent: {item}")
+
+    def message_map(self, item):
+        message = self.body
+        message[0]["tags"]["target"] = item["target"]
+        message[0]["fields"]["up"] = item["up"]
+        message[0]["time"] = round(item["timestamp"])
+
+        return message
+
+
+    def send(self, message):
+        logger.debug(f"Message: {message}")
+

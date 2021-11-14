@@ -19,7 +19,9 @@ class Probe():
 
     def __init__(self):
 
-        self.settings = self.load_config()
+
+        self.settings = self.load_config(0)
+        self.body = [self.load_config(1)]
 
         self.id = self.settings["id"]
         self.name = self.settings["name"]
@@ -35,11 +37,11 @@ class Probe():
         self.db_password = self.settings["db_password"]
 
         # Creates the sender_thread
-        self.sender_thread = Sender(self.event_queue)
+        self.sender_thread = Sender(self.event_queue, self.body, self.db_name, self.db_user, self.db_password)
         self.sender_thread.daemon=True
 
 
-    def load_config(self):
+    def load_config(self, index=0):
         """
         Reads the config file and returns the dict of
         all settings.
@@ -56,8 +58,7 @@ class Probe():
             exit()
 
         json_file = json.loads(config)
-        settings = json_file[0]
-        self.body = [json_file[1]]
+        settings = json_file[index]
 
         return settings
 
@@ -70,7 +71,7 @@ class Probe():
 
             # IF NO THREAD IS ACTIBE, RESTART THE THREAD
             if not self.sender_thread.is_alive():
-                self.sender_thread = Sender(self.event_queue)
+                self.sender_thread = Sender(self.event_queue, self.body, self.db_name, self.db_user, self.db_password)
                 self.sender_thread.daemon=True
                 self.sender_thread.start()
 
