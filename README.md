@@ -11,10 +11,11 @@ The target server is an **InfluxDB**. The data from multiple probes can be easil
 - pinging predefined adresses
 - crude network detection
 - logging to file
+- Config with config.json
 
 ### In progress ###
 
-- Config with config.yaml
+- ~~Config with config.json~~
   - Example config
 - Implementing **[InfluxDB HTTP API](https://github.com/influxdata/influxdb-python)**
 - lots of testing
@@ -27,7 +28,7 @@ The target server is an **InfluxDB**. The data from multiple probes can be easil
 
 ## Config ##
 
-configure with **config.yaml** file
+configure with **config.json** file
 
 ## Run ##
 

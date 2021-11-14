@@ -4,7 +4,9 @@
 # network-probe
 
 import time
+import json
 import threading
+# from influxdb import InfluxDBClient
 from logger import Logger
 logger = Logger(__name__)
 
@@ -23,13 +25,11 @@ class Sender(threading.Thread):
         size = self.event_queue.qsize()
         logger.debug(f"Queue size: {size}")
         item = self.event_queue.get()
+
         sent = False
-
-        self.event_queue
-
         while sent is False:
             # try:
-            self.send(item)
+            self.send( json.dumps(item) )
             # except Error:
             #     timee.sleep(1)
             # else:

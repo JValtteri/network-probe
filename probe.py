@@ -3,6 +3,7 @@
 # J.V.Ojala 12.11.2021
 # network-probe
 
+import json
 import os
 import time
 from queue import Queue, Empty
@@ -19,23 +20,52 @@ class Probe():
 
     def __init__(self):
 
-        self.id = 0
-        self.name = "probe"
-        self.ip_list = ['1.1.1.1', '1.0.0.1']
-        self.count = 1
-        self.time_interval = 2
-        self.detection_debth = 3
-        self.event_queue = Queue(4000)
+        self.settings = self.load_config()
+
+        self.id = self.settings["id"]
+        self.name = self.settings["name"]
+        self.ip_list = self.settings["targets"]
+        self.ping_count = self.settings["ping_count"]
+        self.time_interval = self.settings["time_interval"]
+        self.detection_debth = self.settings["detection_debth"]
+        self.queue_debth = self.settings["event_queue"]
+        self.event_queue = Queue(self.queue_debth)
 
         # Creates the sender_thread
         self.sender_thread = Sender(self.event_queue)
         self.sender_thread.daemon=True
 
+
+    def load_config(self):
+        """
+        Reads the config file and returns the dict of
+        all settings.
+        """
+
+        filename = "config.json"
+
+        try:
+            configfile = open(filename, 'r')
+            configtext = configfile.read()
+            print(configtext)
+        except FileNotFoundError:
+            self.logger.critical("Error: Could not find %s" % filename)
+            exit()
+
+        json_file = json.loads(configtext)
+        settings = json_file[0]
+        configfile.close()
+        self.body = [json_file[1]]
+
+        return settings
+
     def run_probes(self):
         for ip in self.ip_list:
             result = self.ping(ip)
+
             # PUT RESULT TO QUEUE
             self.event_queue.put(result)
+
             # IF NO THREAD IS ACTIBE, RESTART THE THREAD
             if not self.sender_thread.is_alive():
                 self.sender_thread = Sender(self.event_queue)
@@ -51,8 +81,8 @@ class Probe():
         """
 
         posix = time.time() * 1000
-        response = os.popen(f"ping -n {self.count} {ip}").read()
-        if (f"Received = {self.count}") in response:
+        response = os.popen(f"ping -n {self.ping_count} {ip}").read()
+        if (f"Received = {self.ping_count}") in response:
             up = 1
         else:
             up = 0
@@ -64,17 +94,19 @@ class Probe():
         }
         return result
 
+
     def detect_network(self):
         "Trace the first nodes of the network"
         trace_ips = []
         str_range = self.str_range( range( 1, self.detection_debth + 1 ) )
         response = os.popen(f"pathping -q 1 -h {self.detection_debth} 1.1.1.1").readlines()
         for line in response:
+
             # Get the first X IPs on the trace and put them in a LIST: trace_ips
             if len(line) > 3 and line[2] in str_range:
                 trace_ip = line.rsplit("[")[1][0:-3]
                 trace_ips.append(trace_ip)
-                # print(trace_ip)
+
                 if line[2] == str(self.detection_debth):
                     return trace_ips
 
@@ -87,8 +119,10 @@ class Probe():
     def str_range(the_range):
         'conver range() to STR'
         str_list = []
+
         for i in the_range:
             str_list.append( str(i) )
+
         return str_list
 
 
@@ -109,6 +143,7 @@ def test():
     # Starts pinging target IPs
     for i in range(3):
         probe.run_probes()
+    probe.sender_thread.join()
 
 if __name__ == "__main__":
     test()
