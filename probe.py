@@ -44,13 +44,15 @@ class Probe():
 
         # LOG THE CONFIGURATION
         logger.info("Loaded configuration")
-        logger.info("ID: {}".format(self.id))
-        logger.info("Name: {}".format(self.name))
-        logger.info("IP list: {}".format(self.ip_list))
-        logger.info("Ping count: {}".format(self.ping_count))
-        logger.info("Time interval {} s".format(self.time_interval))
-        logger.info("Detection debth: {}".format(self.detection_debth))
-        logger.info("Queue debth: {}".format(self.queue_debth))
+        logger.info(f"ID: {self.id}")
+        logger.info(f"Name: {self.name}")
+        logger.info(f"IP list: {self.ip_list}")
+        logger.info(f"Ping count: {self.ping_count}")
+        logger.info(f"Time interval {self.time_interval} s")
+        logger.info(f"Detection debth: {self.detection_debth}")
+        logger.info(f"Queue debth: {self.queue_debth}")
+        logger.info(f"DB Host: {self.host}")
+        logger.info(f"DB port: {self.port}")
 
 
     def load_config(self, index=0):
