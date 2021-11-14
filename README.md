@@ -6,6 +6,18 @@ Intended to be run on a Raspberry Pi connected to the target network. The softwa
 
 The target server is an **InfluxDB**. The data from multiple probes can be easily analyzed with [Grafana](https://grafana.com/), for example.
 
+## Features ##
+
+- pinging predefined adresses
+- crude network detection
+- logging to file
+
+### In progress ###
+
+- Config with config.yaml
+  - Example config
+- Implementing **[InfluxDB HTTP API](https://github.com/influxdata/influxdb-python)**
+- lots of testing
 
 ## Install ##
 
