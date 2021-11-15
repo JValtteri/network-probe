@@ -159,6 +159,7 @@ def test():
     # Adds discovered nodes to IP list to be pinged
     logger.info("Probe will ping the selected IPs")
     probe.add_ips(ips)
+
     for ip in probe.ip_list:
         logger.info(ip)
     print("\n")
@@ -168,5 +169,29 @@ def test():
         probe.run_probes()
     probe.sender_thread.join()
 
+
+def run():
+    probe = Probe()
+
+    # Runs a network discovery
+    ips = probe.detect_network()
+
+    # Adds discovered nodes to IP list to be pinged
+    logger.info("Probe will ping the selected IPs")
+    probe.add_ips(ips)
+
+    for ip in probe.ip_list:
+        logger.info(ip)
+    print("\n")
+
+    # Starts pinging target IPs
+    try:
+        while True:
+            probe.run_probes()
+    except KeyboardInterrupt:
+        probe.sender_thread.join()
+
+
 if __name__ == "__main__":
-    test()
+    # test()
+    run()
