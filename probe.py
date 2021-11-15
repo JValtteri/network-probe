@@ -12,7 +12,7 @@ from sender import Sender
 
 # LOGGING
 filename = 'probe.log'
-open(filename, 'w').close()     # Creates an empty log file
+open(filename, 'a').close()     # Create/Open log file in 'append' mode
 from logger import Logger
 logger = Logger(__name__)
 
@@ -189,7 +189,9 @@ def run():
         while True:
             probe.run_probes()
     except KeyboardInterrupt:
+        logger.info("Keyboard interrupt detected, beginning shutdown.")
         probe.sender_thread.join()
+        logger.info("Threads closed, terminating.")
 
 
 if __name__ == "__main__":
