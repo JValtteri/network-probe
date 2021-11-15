@@ -133,7 +133,7 @@ class Probe():
                         break
                 except IndexError:
                     return []
-                return trace_ips
+        return trace_ips
 
     def add_ips(self, ip_list):
         'add an IP LIST to the probe ip list'
