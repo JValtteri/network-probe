@@ -55,7 +55,7 @@ class Sender(threading.Thread):
 
     def send(self, message):
         logger.debug(f"Message: {message}")
-        client = InfluxDBClient(self.host, self.port, self.db_user, self.db_password, database=self.db_name, ssl=True)
+        client = InfluxDBClient(self.host, self.port, self.db_user, self.db_password, database=self.db_name, ssl=True, verify_ssl=True)
 
         sent = False
         while sent is False:
