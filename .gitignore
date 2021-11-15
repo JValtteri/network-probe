@@ -9,3 +9,4 @@ probe/*
 *.log
 *.yaml
 *.json
+*.bat

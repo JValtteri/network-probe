@@ -110,7 +110,7 @@ class Probe():
 
         result = {
             "target": ip,
-            "up": up,
+            "value": up,
             "time": posix
         }
         return result
@@ -161,7 +161,7 @@ def test():
     print("\n")
 
     # Starts pinging target IPs
-    for i in range(3):
+    for i in range(1):
         probe.run_probes()
     probe.sender_thread.join()
 
