@@ -130,9 +130,10 @@ class Probe():
                     trace_ips.append(trace_ip)
 
                     if line[2] == str(self.detection_debth):
-                        return trace_ips
+                        break
                 except IndexError:
                     return []
+                return trace_ips
 
     def add_ips(self, ip_list):
         'add an IP LIST to the probe ip list'
