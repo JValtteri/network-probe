@@ -60,7 +60,7 @@ class Sender(threading.Thread):
         sent = False
         while sent is False:
             try:
-                client.write_points(message)
+                client.write_points(message, time_precision='ms')
 
             except:
                 # Yep! This is ugly, but a failed connection raises a million different exceptions.

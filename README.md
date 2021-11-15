@@ -12,24 +12,97 @@ The target server is an **InfluxDB**. The data from multiple probes can be easil
 - crude network detection
 - logging to file
 - Config with config.json
+  - see: example_config.json
 
 ### In progress ###
 
-- ~~Config with config.json~~
-  - ~~Example config~~
-- Implementing **[InfluxDB HTTP API](https://github.com/influxdata/influxdb-python)**
-- lots of testing
+- [ ] lots of testing
 
 ## Install ##
 
+### Install Python 3 on Linux ###
+
+```
+sudo apt-get update
+sudo apt-get install python3
+sudo apt-get install python3-pip
+```
+
+### Install dependencies ###
+
+```
+pip3 install -r requirements.txt
+```
+
 ### Dependencies ###
 
-[HTTP API](https://github.com/influxdata/influxdb-python)
+[InfluxDB Python HTTP API](https://github.com/influxdata/influxdb-python)
 
 ## Config ##
 
 configure with **config.json** file
 
+The config part is divided in to two parts.
+
+### Primary config ###
+The first part has all the configuration you need to care about
+
+First is the *name* of your probe and an *id*. These are used as *tags* in the data sent back to the **InfluxDB**.
+```json
+"name": "aProbe",
+"id": 0,
+```
+
+*Targets* is the list of targets you want to ping.
+```json
+"targets": [
+    "1.1.1.1",
+    "1.0.0.1",
+    "google.com"
+],
+```
+
+| Key    | Default  | Explanation            |
+| ----------------- | - | ------------------ |
+| `"time_interval"`   | 2 | Time between pings |
+| `"ping_count"`      | 1 | Times to ping per test |
+| `"detection_debth"` | 3 | How meny hops from the probe are added to ping list |
+| `"event_queue"`     | 4000 | How meny pings are buffered if network is interrupted. |
+| `"db_name"`         | "db" | The InfluxDB name |
+| `"db_user"`         | "user" | Username to log in to the InfluxDB |
+| `"db_password"`     |   | the InfluxDB password |
+| `"db_host"`         | "localhost" | the address to the InfluxDB. **Omit 'https:\\'** |
+| `"db_port"`         | 8086 | Port used to connect to the InfluxDB |
+
+
+### Message template config ###
+
+The second part contains a template for the message body. 
+
+**YOU DO NOT NEED TO MODIFY IT** 
+
+Infact, best you leave it alone, unless you know what you're doing.
+
+```json
+  {
+      "measurement": "ping",
+      "tags": {
+          "target": "",
+          "name": "Test",
+          "id": 0
+      },
+      "time": 0,
+      "fields": {
+          "up": 1
+      }
+  }
+```
+
 ## Run ##
 
+```
+python probe.py
+```
+
 ### Run on boot (Linux) ###
+
