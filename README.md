@@ -6,6 +6,9 @@ Intended to be run on a Raspberry Pi connected to the target network. The softwa
 
 The target server is an **InfluxDB**. The data from multiple probes can be easily analyzed with [Grafana](https://grafana.com/), for example.
 
+**Note:**
+For older versions of Raspbian, such as **Raspbian 9 Stretch**, without Python 3.6, use the legacy version, from [legacy](https://github.com/JValtteri/network-probe/tree/legacy) branch.
+
 ## Features ##
 
 - pinging predefined adresses
@@ -36,6 +39,7 @@ pip3 install -r requirements.txt
 
 ### Dependencies ###
 
+**Python 3.6** or newer
 [InfluxDB Python HTTP API](https://github.com/influxdata/influxdb-python)
 
 ## Config ##
