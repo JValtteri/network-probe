@@ -16,20 +16,16 @@ The target server is an **InfluxDB**. The data from multiple probes can be easil
 
 ### In progress ###
 
-- ~~Config with config.json~~
-  - ~~Example config~~
-- ~~Implementing **[InfluxDB HTTP API](https://github.com/influxdata/influxdb-python)**~~
 - lots of testing
 
 ## Install ##
 
-### Install Python 3 ###
+### Install Python 3 on Linux ###
 
-**Linux:**
 ```
 sudo apt-get update
-#sudo apt-get install python3
-#sudo apt-get install python3-pip
+sudo apt-get install python3
+sudo apt-get install python3-pip
 ```
 
 ### Install dependencies ###
