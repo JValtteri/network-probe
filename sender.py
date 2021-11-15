@@ -7,6 +7,7 @@ import time
 import json
 import threading
 from influxdb import InfluxDBClient
+from urllib3 import exceptions
 from logger import Logger
 logger = Logger(__name__)
 
@@ -33,16 +34,9 @@ class Sender(threading.Thread):
         logger.debug(f"Queue size: {size}")
         item = self.event_queue.get()
 
-        sent = False
-        while sent is False:
-            # try:
-            message = self.message_map(item)
-            self.send( message )
-            logger.info(f"Sent: {item}")
-            # except Error:
-            #     timee.sleep(1)
-            # else:
-            sent = True
+        message = self.message_map(item)
+        self.send( message )
+        logger.info(f"Sent: {item}")
 
         logger.debug("Sentder thread CLOSED")
 
@@ -59,5 +53,19 @@ class Sender(threading.Thread):
     def send(self, message):
         logger.debug(f"Message: {message}")
         client = InfluxDBClient(self.host, self.port, self.db_user, self.db_password, database=self.db_name, ssl=True)
-        client.write_points(message)
+
+        sent = False
+        while sent is False:
+            try:
+                client.write_points(message)
+
+            except:
+                # Yep! This is ugly, but a failed connection raises a million different exceptions.
+                # Any failure in sendin at this point is a connection error
+                logger.error("Connection Error. Retry in 1 s")
+                time.sleep(1)
+            else:
+                logger.debug("Send succesful!")
+                sent = True
+
         client.close()
