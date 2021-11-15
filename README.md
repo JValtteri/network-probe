@@ -67,7 +67,7 @@ First is the *name* of your probe and an *id*. These are used as *tags* in the d
 | `"time_interval"`   | 2 | Time between pings |
 | `"ping_count"`      | 1 | Times to ping per test |
 | `"detection_debth"` | 3 | How meny hops from the probe are added to ping list |
-| `"event_queue"`     | 4000 | How meny pings are buffered if network is interrupted. |
+| `"event_queue"`     | 15000 | How meny pings are buffered if network is interrupted. |
 | `"db_name"`         | "db" | The InfluxDB name |
 | `"db_user"`         | "user" | Username to log in to the InfluxDB |
 | `"db_password"`     |   | the InfluxDB password |
@@ -77,9 +77,9 @@ First is the *name* of your probe and an *id*. These are used as *tags* in the d
 
 ### Message template config ###
 
-The second part contains a template for the message body. 
+The second part contains a template for the message body.
 
-**YOU DO NOT NEED TO MODIFY IT** 
+**YOU DO NOT NEED TO MODIFY IT**
 
 Infact, best you leave it alone, unless you know what you're doing.
 
