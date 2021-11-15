@@ -12,15 +12,31 @@ The target server is an **InfluxDB**. The data from multiple probes can be easil
 - crude network detection
 - logging to file
 - Config with config.json
+  - see: example_config.json
 
 ### In progress ###
 
 - ~~Config with config.json~~
   - ~~Example config~~
-- Implementing **[InfluxDB HTTP API](https://github.com/influxdata/influxdb-python)**
+- ~~Implementing **[InfluxDB HTTP API](https://github.com/influxdata/influxdb-python)**~~
 - lots of testing
 
 ## Install ##
+
+### Install Python 3 ###
+
+**Linux:**
+```
+sudo apt-get update
+#sudo apt-get install python3
+#sudo apt-get install python3-pip
+```
+
+### Install dependencies ###
+
+```
+pip3 install -r requirements.txt
+```
 
 ### Dependencies ###
 
@@ -32,4 +48,9 @@ configure with **config.json** file
 
 ## Run ##
 
+```
+python probe.py
+```
+
 ### Run on boot (Linux) ###
+
