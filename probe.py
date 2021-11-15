@@ -110,7 +110,7 @@ class Probe():
 
         result = {
             "target": ip,
-            "up": up,
+            "value": up,
             "time": posix
         }
         return result
@@ -125,11 +125,14 @@ class Probe():
 
             # Get the first X IPs on the trace and put them in a LIST: trace_ips
             if len(line) > 3 and line[2] in str_range:
-                trace_ip = line.rsplit("[")[1][0:-3]
-                trace_ips.append(trace_ip)
+                try:
+                    trace_ip = line.rsplit("[")[1][0:-3]
+                    trace_ips.append(trace_ip)
 
-                if line[2] == str(self.detection_debth):
-                    return trace_ips
+                    if line[2] == str(self.detection_debth):
+                        return trace_ips
+                except IndexError:
+                    return []
 
     def add_ips(self, ip_list):
         'add an IP LIST to the probe ip list'
@@ -161,7 +164,7 @@ def test():
     print("\n")
 
     # Starts pinging target IPs
-    for i in range(3):
+    for i in range(1):
         probe.run_probes()
     probe.sender_thread.join()
 
