@@ -44,15 +44,15 @@ class Probe():
 
         # LOG THE CONFIGURATION
         logger.info("Loaded configuration")
-        logger.info(f"ID: {self.id}")
-        logger.info(f"Name: {self.name}")
-        logger.info(f"IP list: {self.ip_list}")
-        logger.info(f"Ping count: {self.ping_count}")
-        logger.info(f"Time interval {self.time_interval} s")
-        logger.info(f"Detection debth: {self.detection_debth}")
-        logger.info(f"Queue debth: {self.queue_debth}")
-        logger.info(f"DB Host: {self.host}")
-        logger.info(f"DB port: {self.port}")
+        logger.info("ID: {}".format(self.id))
+        logger.info("Name: {}".format(self.name))
+        logger.info("IP list: {}".format(self.ip_list))
+        logger.info("Ping count: {}".format(self.ping_count))
+        logger.info("Time interval {} s".format(self.time_interval))
+        logger.info("Detection debth: {}".format(self.detection_debth))
+        logger.info("Queue debth: {}".format(self.queue_debth))
+        logger.info("DB Host: {}".format(self.host))
+        logger.info("DB port: {}".format(self.port))
 
 
     def load_config(self, index=0):
@@ -102,8 +102,8 @@ class Probe():
         """
 
         posix = round( time.time() * 1000 )
-        response = os.popen(f"ping -n {self.ping_count} {ip}").read()
-        if (f"Received = {self.ping_count}") in response:
+        response = os.popen("ping -n {} {}".format(self.ping_count, ip)).read()
+        if ("Received = {}".format(self.ping_count)) in response:
             up = 1
         else:
             up = 0
@@ -120,7 +120,7 @@ class Probe():
         "Trace the first nodes of the network"
         trace_ips = []
         str_range = self.str_range( range( 1, self.detection_debth + 1 ) )
-        response = os.popen(f"pathping -q 1 -h {self.detection_debth} 1.1.1.1").readlines()
+        response = os.popen("pathping -q 1 -h {} 1.1.1.1".format(self.detection_debth)).readlines()
         for line in response:
 
             # Get the first X IPs on the trace and put them in a LIST: trace_ips
