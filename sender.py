@@ -4,8 +4,9 @@
 # network-probe
 
 import time
-import json
+# import json
 import threading
+import copy
 from influxdb import InfluxDBClient
 from urllib3 import exceptions
 from logger import Logger
@@ -33,12 +34,12 @@ class Sender(threading.Thread):
         messages=[]
         size = self.event_queue.qsize()
         while size > 0:
-            logger.debug("Queue size: {}".format(size))
+            logger.info("Queue size: {}".format(size))
             item = self.event_queue.get()
-            message = self.message_map(item)
+            message = copy.deepcopy(self.message_map(item))
             messages.append(message[0])
 
-            logger.info("Sending: {}".format(item))
+            logger.info("New ping: {}".format(item))
 
             size = self.event_queue.qsize()
 
