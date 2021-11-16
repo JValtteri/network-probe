@@ -30,18 +30,20 @@ class Sender(threading.Thread):
 
     def run(self):
         logger.debug("Sender thread STARTED")
-
+        messages=[]
         size = self.event_queue.qsize()
         while size > 0:
             logger.debug("Queue size: {}".format(size))
             item = self.event_queue.get()
-
             message = self.message_map(item)
-            self.send( message )
-            logger.info("Sent: {}".format(item))
+            messages.append(message[0])
+
+            logger.info("Sending: {}".format(item))
 
             size = self.event_queue.qsize()
 
+        logger.debug("Sending")
+        self.send( messages )
         logger.debug("Sentder thread CLOSED")
 
     def message_map(self, item):
