@@ -33,12 +33,12 @@ class Sender(threading.Thread):
 
         size = self.event_queue.qsize()
         while size > 0:
-            logger.debug(f"Queue size: {size}")
+            logger.debug("Queue size: {}".format(size))
             item = self.event_queue.get()
 
             message = self.message_map(item)
             self.send( message )
-            logger.info(f"Sent: {item}")
+            logger.info("Sent: {}".format(item))
 
             size = self.event_queue.qsize()
 
@@ -54,7 +54,7 @@ class Sender(threading.Thread):
 
 
     def send(self, message):
-        logger.debug(f"Message: {message}")
+        logger.debug("Message: {}".format(message))
         client = InfluxDBClient(self.host, self.port, self.db_user, self.db_password, database=self.db_name, ssl=True, verify_ssl=True)
 
         sent = False
