@@ -4,11 +4,14 @@
 # network-probe
 
 import json
+from logging import log
 import os
 import queue
 import time
 from queue import Queue, Empty
 from sender import Sender
+import platform
+
 
 # LOGGING
 filename = 'probe.log'
@@ -54,6 +57,10 @@ class Probe():
         logger.info("DB Host: {}".format(self.host))
         logger.info("DB port: {}".format(self.port))
 
+        if platform.system() == 'Linux':
+            self.ping = self.linux_ping
+            self.detect_network = self.linux_detect_network
+
 
     def load_config(self, index=0):
         """
@@ -95,6 +102,7 @@ class Probe():
 
         time.sleep(self.time_interval)
 
+
     def ping(self, ip):
         """
         returns:
@@ -104,6 +112,27 @@ class Probe():
         posix = round( time.time() * 1000 )
         response = os.popen("ping -n {} {}".format(self.ping_count, ip)).read()
         if ("Received = {}".format(self.ping_count)) in response:
+            up = 1
+        else:
+            up = 0
+
+        result = {
+            "target": ip,
+            "value": up,
+            "time": posix
+        }
+        return result
+
+
+    def linux_ping(self, ip):
+        """
+        returns:
+        {"target": IP, "up": 1 or 0, "time": POSIX(µs)}
+        """
+
+        posix = round( time.time() * 1000 )
+        response = os.popen("ping -c {} {}".format(self.ping_count, ip)).read()
+        if ("{} received".format(self.ping_count)) in response:
             up = 1
         else:
             up = 0
@@ -135,10 +164,32 @@ class Probe():
                     return []
         return trace_ips
 
+
+    def linux_detect_network(self):
+        "Trace the first nodes of the network"
+        trace_ips = []
+        str_range = self.str_range( range( 1, self.detection_debth + 1 ) )
+        response = os.popen("traceroute -q 1 1.1.1.1").readlines()
+        for line in response:
+
+            # Get the first X IPs on the trace and put them in a LIST: trace_ips
+            if len(line) > 3 and line[1] in str_range:
+                try:
+                    trace_ip = line.rsplit("(")[1].rsplit(")")[0]
+                    trace_ips.append(trace_ip)
+
+                    if line[1] == str(self.detection_debth):
+                        break
+                except IndexError:
+                    return trace_ips
+        return trace_ips
+
+
     def add_ips(self, ip_list):
         'add an IP LIST to the probe ip list'
         for ip in ip_list:
             self.ip_list.append(ip)
+
 
     @staticmethod
     def str_range(the_range):
