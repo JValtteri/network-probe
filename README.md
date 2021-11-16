@@ -2,12 +2,14 @@
 
 A probe for checking the network health and reporting the health to a remote **InfluxDB** via [HTTP API](https://github.com/influxdata/influxdb-python).
 
-Intended to be run on a Raspberry Pi connected to the target network. The software will **ping** predefined adresses inside and outside the network, with predefined freaquency, to catch connection drops. Also probes the **default DNS** to see if it has outages.
+Intended to be run on a ***Raspberry Pi*** connected to the target network. The software will **ping** predefined adresses inside and outside the network, with predefined freaquency, to catch connection drops. Also probes the **default DNS** to see if it has outages.
 
 The target server is an **InfluxDB**. The data from multiple probes can be easily analyzed with [Grafana](https://grafana.com/), for example.
 
-**Note:**
-For older versions of Raspbian, such as **Raspbian 9 Stretch**, without Python 3.6, use the legacy version, from [legacy](https://github.com/JValtteri/network-probe/tree/legacy) branch.
+### Compatability Notice: ###
+Older versions of ***Raspbian***, such as ***Raspbian 9 Stretch***, don't have ***Python 3.6***. **This version has legacy support for ***Python 3.5***.** This support, however **will be discontinued in the future.** In the future, you will need ***Python 3.6*** **or newer**.
+
+This program is designed to work with ***Raspbian Stretch*** and newer and ***Windows***. Compatability with ***other Linux versions*** varies. It is dependent on the output of ```ping``` and ```tracepath``` commands.
 
 ## Features ##
 
@@ -39,8 +41,8 @@ pip3 install -r requirements.txt
 
 ### Dependencies ###
 
-**Python 3.6** or newer
-[InfluxDB Python HTTP API](https://github.com/influxdata/influxdb-python)
+- **Python 3.5*** or newer
+- [InfluxDB Python HTTP API](https://github.com/influxdata/influxdb-python)
 
 ## Config ##
 
