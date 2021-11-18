@@ -23,9 +23,11 @@ class Probe():
 
     def __init__(self):
 
+        # Loads the config
         self.settings = self.load_config(0)
         self.body = [self.load_config(1)]
 
+        # Stores the values in the object
         self.id = self.settings["id"]
         self.name = self.settings["name"]
         self.ip_list = self.settings["targets"]
@@ -35,11 +37,16 @@ class Probe():
         self.queue_debth = self.settings["event_queue"]
         self.event_queue = Queue(self.queue_debth)
 
+        # DB configuration
         self.db_name = self.settings["db_name"]
         self.db_user = self.settings["db_user"]
         self.db_password = self.settings["db_password"]
         self.host = self.settings["db_host"]
         self.port = self.settings["db_port"]
+
+        # Updates the body static values
+        self.body[0]["tags"]["name"] = self.name
+        self.body[0]["tags"]["id"] = self.id
 
         # Creates the sender_thread
         self.sender_thread = Sender(self.event_queue, self.body, self.db_name, self.db_user, self.db_password, self.host, self.port)
