@@ -4,11 +4,9 @@
 # network-probe
 
 import time
-# import json
 import threading
 import copy
 from influxdb import InfluxDBClient
-from urllib3 import exceptions
 from logger import Logger
 logger = Logger(__name__)
 
@@ -32,6 +30,7 @@ class Sender(threading.Thread):
         # Internal variables
         self.queue_warnined = False                 # Flag flips if queue grows alarmingly big
         self.queue_warning_threshold = 10800        # Queue size to trigger a warning
+
 
     def run(self):
         '''Thread main function'''
@@ -65,6 +64,7 @@ class Sender(threading.Thread):
         logger.debug("Sending")
         self.send( messages )
         logger.debug("Sender thread CLOSED")
+
 
     def message_map(self, item):
         '''Maps values in ITEM to message body'''
