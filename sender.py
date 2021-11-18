@@ -22,12 +22,16 @@ class Sender(threading.Thread):
         self.event_queue = event_queue
         self.body = body
 
+        # Configuration
         self.host = db_host
         self.port = db_port
         self.db_name = db_name
         self.db_user = db_user
         self.db_password = db_password
 
+        # Internal variables
+        self.queue_warnined = False                 # Flag flips if queue grows alarmingly big
+        self.queue_warning_threshold = 10800        # Queue size to trigger a warning
 
     def run(self):
         '''Thread main function'''
@@ -35,16 +39,29 @@ class Sender(threading.Thread):
         messages=[]
         queue_size = self.event_queue.qsize()
 
+        # Warns of large queue
+        if queue_size > self.queue_warning_threshold:
+                logger.warning("Large queue: {}".format(queue_size))
+                self.queue_warnined = True
+
         while queue_size > 0:
-            logger.info("Queue size: {}".format(queue_size))
+            logger.debug("Queue size: {}".format(queue_size))
+
             item = self.event_queue.get()
             message = copy.deepcopy(self.message_map(item))
             # Adds message to a list to be sent
             messages.append(message[0])
             logger.info("New ping: {}".format(item))
+
             # Checks if queue has any new events
             queue_size = self.event_queue.qsize()
 
+            # Warns if can't keep up
+            if queue_size > self.queue_warning_threshold and self.queue_warnined == False:
+                self.queue_warnined = True
+                logger.warning("Can't keep up. Large queue: {}".format(queue_size))
+
+        self.queue_warnined = False               # Warning is reset
         logger.debug("Sending")
         self.send( messages )
         logger.debug("Sender thread CLOSED")
