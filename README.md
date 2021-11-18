@@ -21,7 +21,8 @@ This program is designed to work with ***Raspbian Stretch*** and newer and ***Wi
 
 ### In progress ###
 
-- [ ] lots of testing
+- [ ] production deployment
+- [x] ~~lots of testing~~
 
 ## Install ##
 
@@ -72,7 +73,7 @@ First is the *name* of your probe and an *id*. These are used as *tags* in the d
 | ----------------- | - | ------------------ |
 | `"time_interval"`   | 2 | Time between pings |
 | `"ping_count"`      | 1 | Times to ping per test |
-| `"detection_debth"` | 3 | How meny hops from the probe are added to ping list |
+| `"detection_depth"` | 3 | How meny hops from the probe are added to ping list |
 | `"event_queue"`     | 15000 | How meny pings are buffered if network is interrupted. |
 | `"db_name"`         | "db" | The InfluxDB name |
 | `"db_user"`         | "user" | Username to log in to the InfluxDB |
