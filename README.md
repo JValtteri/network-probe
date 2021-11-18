@@ -108,7 +108,7 @@ Infact, best you leave it alone, unless you know what you're doing.
 ## Run ##
 
 ```
-python probe.py
+python3 probe.py
 ```
 
 ### Run on boot (Linux) ###
