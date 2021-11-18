@@ -78,7 +78,7 @@ First is the *name* of your probe and an *id*. These are used as *tags* in the d
 | `"db_name"`         | "db" | The InfluxDB name |
 | `"db_user"`         | "user" | Username to log in to the InfluxDB |
 | `"db_password"`     |   | the InfluxDB password |
-| `"db_host"`         | "localhost" | the address to the InfluxDB. **Omit 'https:\\'** |
+| `"db_host"`         | "localhost" | the address to the InfluxDB. ```!! omit 'https:\\' !!``` |
 | `"db_port"`         | 8086 | Port used to connect to the InfluxDB |
 
 
