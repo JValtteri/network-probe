@@ -33,9 +33,9 @@ class Probe():
         self.ip_list = self.settings["targets"]
         self.ping_count = self.settings["ping_count"]
         self.time_interval = self.settings["time_interval"]
-        self.detection_debth = self.settings["detection_debth"]
-        self.queue_debth = self.settings["event_queue"]
-        self.event_queue = Queue(self.queue_debth)
+        self.detection_depth = self.settings["detection_depth"]
+        self.queue_depth = self.settings["event_queue"]
+        self.event_queue = Queue(self.queue_depth)
 
         # DB configuration
         self.db_name = self.settings["db_name"]
@@ -59,8 +59,8 @@ class Probe():
         logger.info("IP list: {}".format(self.ip_list))
         logger.info("Ping count: {}".format(self.ping_count))
         logger.info("Time interval {} s".format(self.time_interval))
-        logger.info("Detection debth: {}".format(self.detection_debth))
-        logger.info("Queue debth: {}".format(self.queue_debth))
+        logger.info("Detection depth: {}".format(self.detection_depth))
+        logger.info("Queue depth: {}".format(self.queue_depth))
         logger.info("DB Host: {}".format(self.host))
         logger.info("DB port: {}".format(self.port))
 
@@ -81,11 +81,16 @@ class Probe():
             configfile = open(filename, 'r')
             config = configfile.read()
             configfile.close()
+
         except FileNotFoundError:
             self.logger.critical("Error: Could not find %s" % filename)
             exit()
 
+        # Loads the config.json
         json_file = json.loads(config)
+        # Returns the part that is selected
+        # 0: User config
+        # 1: Message body template
         settings = json_file[index]
 
         return settings
@@ -95,13 +100,13 @@ class Probe():
         for ip in self.ip_list:
             result = self.ping(ip)
 
-            # PUT RESULT TO QUEUE
+            # Put result to queue
             try:
                 self.event_queue.put(result)
             except queue.Full:
                 logger.error("queue.FULL")
 
-            # IF NO THREAD IS ACTIBE, RESTART THE THREAD
+            # If no thread is actibe, restart the thread
             if not self.sender_thread.is_alive():
                 self.sender_thread = Sender(self.event_queue, self.body, self.db_name, self.db_user, self.db_password, self.host, self.port)
                 self.sender_thread.daemon=True
@@ -112,7 +117,7 @@ class Probe():
 
     def ping(self, ip):
         """
-        returns:
+        Pings the IP, returns:
         {"target": IP, "up": 1 or 0, "time": POSIX(µs)}
         """
 
@@ -137,7 +142,7 @@ class Probe():
         {"target": IP, "up": 1 or 0, "time": POSIX(µs)}
         """
 
-        posix = round( time.time() * 1000 )
+        posix = round( time.time() * 1000 )  # ms
         response = os.popen("ping -c {} {}".format(self.ping_count, ip)).read()
         if ("{} received".format(self.ping_count)) in response:
             up = 1
@@ -155,8 +160,8 @@ class Probe():
     def detect_network(self):
         "Trace the first nodes of the network"
         trace_ips = []
-        str_range = self.str_range( range( 1, self.detection_debth + 1 ) )
-        response = os.popen("pathping -q 1 -h {} 1.1.1.1".format(self.detection_debth)).readlines()
+        str_range = self.str_range( range( 1, self.detection_depth + 1 ) )
+        response = os.popen("pathping -q 1 -h {} 1.1.1.1".format(self.detection_depth)).readlines()
         for line in response:
 
             # Get the first X IPs on the trace and put them in a LIST: trace_ips
@@ -165,17 +170,17 @@ class Probe():
                     trace_ip = line.rsplit("[")[1][0:-3]
                     trace_ips.append(trace_ip)
 
-                    if line[2] == str(self.detection_debth):
+                    if line[2] == str(self.detection_depth):
                         break
                 except IndexError:
-                    return []
+                    return trace_ips
         return trace_ips
 
 
     def linux_detect_network(self):
         "Trace the first nodes of the network"
         trace_ips = []
-        str_range = self.str_range( range( 1, self.detection_debth + 1 ) )
+        str_range = self.str_range( range( 1, self.detection_depth + 1 ) )
         response = os.popen("traceroute -q 1 1.1.1.1").readlines()
         for line in response:
 
@@ -185,7 +190,7 @@ class Probe():
                     trace_ip = line.rsplit("(")[1].rsplit(")")[0]
                     trace_ips.append(trace_ip)
 
-                    if line[1] == str(self.detection_debth):
+                    if line[1] == str(self.detection_depth):
                         break
                 except IndexError:
                     return trace_ips
@@ -241,6 +246,7 @@ def run():
     logger.info("Probe will ping the selected IPs")
     probe.add_ips(ips)
 
+    # Logs the IPs
     for ip in probe.ip_list:
         logger.info(ip)
     print("\n")

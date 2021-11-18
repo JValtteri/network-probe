@@ -30,24 +30,27 @@ class Sender(threading.Thread):
 
 
     def run(self):
+        '''Thread main function'''
         logger.debug("Sender thread STARTED")
         messages=[]
-        size = self.event_queue.qsize()
-        while size > 0:
-            logger.info("Queue size: {}".format(size))
+        queue_size = self.event_queue.qsize()
+
+        while queue_size > 0:
+            logger.info("Queue size: {}".format(queue_size))
             item = self.event_queue.get()
             message = copy.deepcopy(self.message_map(item))
+            # Adds message to a list to be sent
             messages.append(message[0])
-
             logger.info("New ping: {}".format(item))
-
-            size = self.event_queue.qsize()
+            # Checks if queue has any new events
+            queue_size = self.event_queue.qsize()
 
         logger.debug("Sending")
         self.send( messages )
-        logger.debug("Sentder thread CLOSED")
+        logger.debug("Sender thread CLOSED")
 
     def message_map(self, item):
+        '''Maps values in ITEM to message body'''
         message = self.body
         message[0]["tags"]["target"] = item["target"]
         message[0]["fields"]["value"] = item["value"]
@@ -57,6 +60,7 @@ class Sender(threading.Thread):
 
 
     def send(self, message):
+        '''Sends the MESSAGE to influxDB'''
         logger.debug("Message: {}".format(message))
         client = InfluxDBClient(self.host, self.port, self.db_user, self.db_password, database=self.db_name, ssl=True, verify_ssl=True)
 
