@@ -256,8 +256,9 @@ def run():
         while True:
             probe.run_probes()
     except KeyboardInterrupt:
-        logger.info("Keyboard interrupt detected, beginning shutdown.")
-        probe.sender_thread.join()
+        timeout = 15 # seconds
+        logger.info("Keyboard interrupt detected, waiting for threads ({} s).".format(timeout))
+        probe.sender_thread.join(timeout)
         logger.info("Threads closed, terminating.")
 
 
