@@ -29,7 +29,7 @@ class Logger():
 
         # Set handler levels
         self.stream_handler.setLevel(logging.DEBUG)
-        self.file_handler.setLevel(logging.DEBUG)
+        self.file_handler.setLevel(logging.INFO)
 
         # Set log format
         self.logging_format = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
