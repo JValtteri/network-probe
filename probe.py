@@ -189,6 +189,8 @@ class Probe():
         'add an IP LIST to the probe ip list'
         for ip in ip_list:
             self.ip_list.append(ip)
+        # Remove duplicaes
+        self.ip_list = set(self.ip_list)
 
 
     @staticmethod
