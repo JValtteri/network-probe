@@ -9,7 +9,7 @@ The target server is an **InfluxDB**. The data from multiple probes can be easil
 ### Compatability Notice: ###
 Older versions of ***Raspbian***, such as ***Raspbian 9 Stretch***, don't have ***Python 3.6***. **This version has legacy support for ***Python 3.5***.** This support, however **will be discontinued in the future.** In the future, you will need ***Python 3.6*** **or newer**.
 
-This program is designed to work with ***Raspbian Stretch*** and newer and ***Windows***. Compatability with ***other Linux versions*** varies. It is dependent on the output of ```ping``` and ```tracepath``` commands.
+This program is designed to work with ***Raspbian Stretch*** and newer and ***Windows***. Compatability with ***other Linux versions*** varies. It is dependent on the output of ```ping``` and ```traceroute``` commands.
 
 ## Features ##
 
