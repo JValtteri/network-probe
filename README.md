@@ -111,5 +111,25 @@ Infact, best you leave it alone, unless you know what you're doing.
 python3 probe.py
 ```
 
-### Run on boot (Linux) ###
+stop with ```Ctrl``` + ```C```
 
+## Run on boot (Raspbian Linux) ##
+
+**Disclaimer:**
+> Included is a simple systemd service that automatically starts the probe on boot after network is up.
+> Please note that both the installation script and the service itself have hardcoded paths for specific use case with Raspberry Pi.
+
+**Assuming** 
+- the OS **Raspbian Linux** and 
+- user the **Pi** (raspbian default user)
+
+If you have not yet done so, clone network-probe to Pi home directory: 
+```
+cd /home/pi
+git clone https://github.com/JValtteri/network-probe.git
+```
+
+**Run** 
+```
+install-service.sh
+```
