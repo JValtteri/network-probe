@@ -1,0 +1,15 @@
+[Unit]
+Description=Network Probe
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=pi
+Group=pi
+WorkingDirectory=/home/pi/network-probe
+ExecStart=/usr/bin/python /home/pi/network-probe/probe.py
+Restart=on-abort
+
+[Install]
+WantedBy=multi-user.target
