@@ -4,6 +4,8 @@
 # Logger
 
 import logging
+import logging.handlers
+from logging.handlers import RotatingFileHandler
 
 class Logger():
     '''
@@ -24,23 +26,28 @@ class Logger():
         self.logger.setLevel(logging.DEBUG)
 
         # Create handlers
-        self.file_handler = logging.FileHandler(filename)
+        # self.file_handler = logging.FileHandler(filename)
+        self.rotation_handler = RotatingFileHandler(filename, maxBytes=100*1024*1024, backupCount=1)
         self.stream_handler = logging.StreamHandler()
 
         # Set handler levels
         self.stream_handler.setLevel(logging.DEBUG)
-        self.file_handler.setLevel(logging.INFO)
+        # self.file_handler.setLevel(logging.INFO)
+        self.rotation_handler.setLevel(logging.INFO)
 
         # Set log format
         self.logging_format = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
         # Add formatter to handlers
         self.stream_handler.setFormatter(self.logging_format)
-        self.file_handler.setFormatter(self.logging_format)
+        # self.file_handler.setFormatter(self.logging_format)
+        self.rotation_handler.setFormatter(self.logging_format)
 
         # Add handlers to the logger
         self.logger.addHandler(self.stream_handler)
-        self.logger.addHandler(self.file_handler)
+        # self.logger.addHandler(self.file_handler)
+        self.logger.addHandler(self.rotation_handler)
+
 
     def get_logger(self):
         '''
