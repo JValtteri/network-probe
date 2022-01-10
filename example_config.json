@@ -9,6 +9,7 @@
         ],
         "time_interval": 2,
         "ping_count": 1,
+        "auto_discovery": true,
         "detection_depth": 3,
         "event_queue": 15000,
         "db_name": "db",

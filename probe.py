@@ -36,6 +36,7 @@ class Probe():
         self.detection_depth = self.settings["detection_depth"]
         self.queue_depth = self.settings["event_queue"]
         self.event_queue = Queue(self.queue_depth)
+        self.auto_discovery = self.settings["auto_discovery"]
 
         # DB configuration
         self.db_name = self.settings["db_name"]
@@ -59,6 +60,7 @@ class Probe():
         logger.info("IP list: {}".format(self.ip_list))
         logger.info("Ping count: {}".format(self.ping_count))
         logger.info("Time interval {} s".format(self.time_interval))
+        logger.info("Auto detection {}".format(self.auto_discovery))
         logger.info("Detection depth: {}".format(self.detection_depth))
         logger.info("Queue depth: {}".format(self.queue_depth))
         logger.info("DB Host: {}".format(self.host))
@@ -159,6 +161,7 @@ class Probe():
 
     def detect_network(self):
         "Trace the first nodes of the network"
+        logger.info("Running network auto detect")
         trace_ips = []
         str_range = self.str_range( range( 1, self.detection_depth + 1 ) )
         response = os.popen("pathping -q 1 -h {} 1.1.1.1".format(self.detection_depth)).readlines()
@@ -240,11 +243,13 @@ def run():
     probe = Probe()
 
     # Runs a network discovery
-    ips = probe.detect_network()
+    if probe.auto_discovery == True:
+        ips = probe.detect_network()
+        probe.add_ips(ips)
 
     # Adds discovered nodes to IP list to be pinged
     logger.info("Probe will ping the selected IPs")
-    probe.add_ips(ips)
+
 
     # Logs the IPs
     for ip in probe.ip_list:
