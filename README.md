@@ -73,6 +73,7 @@ First is the *name* of your probe and an *id*. These are used as *tags* in the d
 | ----------------- | - | ------------------ |
 | `"time_interval"`   | 2 | Time between pings |
 | `"ping_count"`      | 1 | Times to ping per test |
+| `"auto_discovery"`  | true | Enables automatic network discoverys |
 | `"detection_depth"` | 3 | How meny hops from the probe are added to ping list |
 | `"event_queue"`     | 15000 | How meny pings are buffered if network is interrupted. |
 | `"db_name"`         | "db" | The InfluxDB name |
@@ -119,17 +120,17 @@ stop with ```Ctrl``` + ```C```
 > Included is a simple systemd service that automatically starts the probe on boot after network is up.
 > Please note that both the installation script and the service itself have hardcoded paths for specific use case with Raspberry Pi.
 
-**Assuming** 
-- the OS **Raspbian Linux** and 
+**Assuming**
+- the OS **Raspbian Linux** and
 - user the **Pi** (raspbian default user)
 
-If you have not yet done so, clone network-probe to Pi home directory: 
+If you have not yet done so, clone network-probe to Pi home directory:
 ```
 cd /home/pi
 git clone https://github.com/JValtteri/network-probe.git
 ```
 
-**Run** 
+**Run**
 ```
 install-service.sh
 ```

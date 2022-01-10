@@ -10,6 +10,7 @@ import queue
 import time
 from queue import Queue, Empty
 from sender import Sender
+from ping import Ping
 import platform
 
 
@@ -49,9 +50,13 @@ class Probe():
         self.body[0]["tags"]["name"] = self.name
         self.body[0]["tags"]["id"] = self.id
 
-        # Creates the sender_thread
+        # Creates the threads
         self.sender_thread = Sender(self.event_queue, self.body, self.db_name, self.db_user, self.db_password, self.host, self.port)
         self.sender_thread.daemon=True
+        self.ping_threads = []
+        for ip in self.ip_list:
+            self.ping_threads.append(Ping(ip, self.time_interval, self.event_queue))
+            self.ping_threads[-1].daemon=True
 
         # LOG THE CONFIGURATION
         logger.info("Loaded configuration")
@@ -99,7 +104,16 @@ class Probe():
 
     def run_probes(self):
         """Run ping for each adress in ip_list"""
+        for pinger in self.ping_threads:
+            pinger.start()
+            pinger.daemon=True
+
         for ip in self.ip_list:
+            self.ping_thread
+            ## START PING THREAD
+
+            ####################
+
             result = self.ping(ip)
 
             # Put result to queue
@@ -117,25 +131,25 @@ class Probe():
         time.sleep(self.time_interval)
 
 
-    def ping(self, ip):
-        """
-        Pings the IP, returns:
-        {"target": IP, "up": 1 or 0, "time": POSIX(µs)}
-        """
+    # def ping(self, ip):
+    #     """
+    #     Pings the IP, returns:
+    #     {"target": IP, "up": 1 or 0, "time": POSIX(µs)}
+    #     """
 
-        posix = round( time.time() * 1000 )
-        response = os.popen("ping -n {} {}".format(self.ping_count, ip)).read()
-        if ("Received = {}".format(self.ping_count)) in response:
-            up = 1
-        else:
-            up = 0
+    #     posix = round( time.time() * 1000 )
+    #     response = os.popen("ping -n {} {}".format(self.ping_count, ip)).read()
+    #     if ("Received = {}".format(self.ping_count)) in response:
+    #         up = 1
+    #     else:
+    #         up = 0
 
-        result = {
-            "target": ip,
-            "value": up,
-            "time": posix
-        }
-        return result
+    #     result = {
+    #         "target": ip,
+    #         "value": up,
+    #         "time": posix
+    #     }
+    #     return result
 
 
     def linux_ping(self, ip):
@@ -258,8 +272,7 @@ def run():
 
     # Starts pinging target IPs
     try:
-        while True:
-            probe.run_probes()
+        probe.run_probes()
     except KeyboardInterrupt:
         timeout = 15 # seconds
         logger.info("Keyboard interrupt detected, waiting for threads ({} s).".format(timeout))
