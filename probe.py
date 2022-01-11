@@ -111,15 +111,16 @@ class Probe():
         for pinger in self.ping_threads:
             pinger.daemon=True
             pinger.start()
+        time.sleep(3)
+        self.sender_thread.start()
 
         # WAITS FOR KEYBOARD INTERRUPT AND KEEPS THREAD ALIVE
         while True:
             # If no thread is active, restart the thread
-            if not self.sender_thread.is_alive():
+            # if not self.sender_thread.is_alive():
                 # self.sender_thread = Sender(self.event_queue, self.body, self.db_name, self.db_user, self.db_password, self.host, self.port)
                 # self.sender_thread.daemon=True
-                self.sender_thread.start()
-            time.sleep(self.time_interval)
+            time.sleep(5)
 
 
     def linux_ping(self, ip):
