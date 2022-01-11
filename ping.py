@@ -34,10 +34,12 @@ class Ping(threading.Thread):
             while True:
                 try:
                     self.out_queue.put(result)
+                    # logger.debug("put to queue")
                 except queue.Full:
                     logger.error("queue.FULL")
                     time.sleep(self.interval)
                 else:
+                    # logger.debug("yap")
                     break
             queue_size = self.command_queue.qsize()
             if queue_size > 0:

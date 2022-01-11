@@ -62,12 +62,15 @@ class Sender(threading.Thread):
                     self.queue_warnined = True
                     logger.warning("Can't keep up. Large queue: {}".format(queue_size))
 
-            else:
-                time.sleep(5)
+
 
             self.queue_warnined = False               # Warning is reset
-            logger.debug("Sending")
-            self.send( messages )
+            if len(messages) > 0:
+                logger.debug("Sending")
+                self.send( messages )
+            else:
+                logger.debug("Sleeping")
+                time.sleep(5)
 
             cq_size = self.command_queue.qsize()
             if cq_size > 0:

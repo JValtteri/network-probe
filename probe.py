@@ -111,7 +111,6 @@ class Probe():
         for pinger in self.ping_threads:
             pinger.daemon=True
             pinger.start()
-        time.sleep(3)
         self.sender_thread.start()
 
         # WAITS FOR KEYBOARD INTERRUPT AND KEEPS THREAD ALIVE
