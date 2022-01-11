@@ -36,6 +36,7 @@ class Probe():
         self.detection_depth = self.settings["detection_depth"]
         self.queue_depth = self.settings["event_queue"]
         self.event_queue = Queue(self.queue_depth)
+        self.timeout = 3
 
         # DB configuration
         self.db_name = self.settings["db_name"]
@@ -122,7 +123,7 @@ class Probe():
         """
 
         posix = round( time.time() * 1000 )
-        response = os.popen("ping -n {} {}".format(self.ping_count, ip)).read()
+        response = os.popen("ping -n {} -w {} {}".format(self.ping_count, self.timeout, ip)).read()
         if ("Received = {}".format(self.ping_count)) in response:
             up = 1
         else:
@@ -143,7 +144,7 @@ class Probe():
         """
 
         posix = round( time.time() * 1000 )  # ms
-        response = os.popen("ping -c {} {}".format(self.ping_count, ip)).read()
+        response = os.popen("ping -c {} -w {} {}".format(self.ping_count, self.timeout, ip)).read()
         if ("{} received".format(self.ping_count)) in response:
             up = 1
         else:
