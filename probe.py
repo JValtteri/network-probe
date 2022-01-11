@@ -37,6 +37,7 @@ class Probe():
         self.detection_depth = self.settings["detection_depth"]
         self.queue_depth = self.settings["event_queue"]
         self.event_queue = Queue(self.queue_depth)
+        self.command_queue = Queue(1)
         try:
             self.auto_discovery = self.settings["auto_discovery"]
         except:
@@ -58,7 +59,7 @@ class Probe():
         self.sender_thread.daemon=True
         self.ping_threads = []
         for ip in self.ip_list:
-            self.ping_threads.append(Ping(ip, self.time_interval, self.event_queue))
+            self.ping_threads.append(Ping(ip, self.time_interval, self.event_queue, self.command_queue, self.ping_count))
             self.ping_threads[-1].daemon=True
 
         # LOG THE CONFIGURATION
@@ -243,6 +244,7 @@ def run():
     try:
         probe.run_probes()
     except KeyboardInterrupt:
+        probe.command_queue.put(1)     # Sends stop command to ping threads
         timeout = 5 # seconds
         logger.info("Keyboard interrupt detected, waiting for threads ({} s).".format(timeout))
         probe.sender_thread.join(timeout)

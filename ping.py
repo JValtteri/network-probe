@@ -14,12 +14,13 @@ logger = Logger(__name__)
 class Ping(threading.Thread):
     '''A thread to send the ping analytics.'''
 
-    def __init__(self, ip, interval, out_queue, ping_count=1, daemon=True):
+    def __init__(self, ip, interval, out_queue, command_queue, ping_count=1, daemon=True):
 
         threading.Thread.__init__(self)
         self.ip = ip
         self.interval = interval
         self.out_queue = out_queue
+        self.command_queue = command_queue
         self.ping_count = ping_count
 
     def run(self):
@@ -37,7 +38,11 @@ class Ping(threading.Thread):
                     time.sleep(self.interval)
                 else:
                     break
+            queue_size = self.command_queue.qsize()
+            if queue_size > 0:
+                break
             time.sleep(self.interval)
+        logger.debug("Ping thread STOPPED")
 
 
     def ping(self):
