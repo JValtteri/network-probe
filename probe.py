@@ -105,51 +105,17 @@ class Probe():
     def run_probes(self):
         """Run ping for each adress in ip_list"""
         for pinger in self.ping_threads:
-            pinger.start()
             pinger.daemon=True
+            pinger.start()
 
-        for ip in self.ip_list:
-            self.ping_thread
-            ## START PING THREAD
-
-            ####################
-
-            result = self.ping(ip)
-
-            # Put result to queue
-            try:
-                self.event_queue.put(result)
-            except queue.Full:
-                logger.error("queue.FULL")
-
-            # If no thread is actibe, restart the thread
+        # WAITS FOR KEYBOARD INTERRUPT AND KEEPS THREAD ALIVE
+        while True:
+            # If no thread is active, restart the thread
             if not self.sender_thread.is_alive():
                 self.sender_thread = Sender(self.event_queue, self.body, self.db_name, self.db_user, self.db_password, self.host, self.port)
                 self.sender_thread.daemon=True
                 self.sender_thread.start()
-
-        time.sleep(self.time_interval)
-
-
-    # def ping(self, ip):
-    #     """
-    #     Pings the IP, returns:
-    #     {"target": IP, "up": 1 or 0, "time": POSIX(µs)}
-    #     """
-
-    #     posix = round( time.time() * 1000 )
-    #     response = os.popen("ping -n {} {}".format(self.ping_count, ip)).read()
-    #     if ("Received = {}".format(self.ping_count)) in response:
-    #         up = 1
-    #     else:
-    #         up = 0
-
-    #     result = {
-    #         "target": ip,
-    #         "value": up,
-    #         "time": posix
-    #     }
-    #     return result
+            time.sleep(self.time_interval)
 
 
     def linux_ping(self, ip):
@@ -274,9 +240,11 @@ def run():
     try:
         probe.run_probes()
     except KeyboardInterrupt:
-        timeout = 15 # seconds
+        timeout = 5 # seconds
         logger.info("Keyboard interrupt detected, waiting for threads ({} s).".format(timeout))
         probe.sender_thread.join(timeout)
+        for pinger in probe.ping_threads:
+            pinger.join(timeout)
         logger.info("Threads closed, terminating.")
 
 

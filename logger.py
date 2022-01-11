@@ -21,7 +21,7 @@ class Logger():
 
         self.module_name = module_name
         self.logger = logging.getLogger(self.module_name)
-        self.logger.setLevel(logging.INFO)
+        self.logger.setLevel(logging.DEBUG)
 
         # Create handlers
         self.file_handler = logging.FileHandler(filename)
