@@ -37,7 +37,10 @@ class Probe():
         self.detection_depth = self.settings["detection_depth"]
         self.queue_depth = self.settings["event_queue"]
         self.event_queue = Queue(self.queue_depth)
-        self.auto_discovery = self.settings["auto_discovery"]
+        try:
+            self.auto_discovery = self.settings["auto_discovery"]
+        except:
+            self.auto_discovery = False
 
         # DB configuration
         self.db_name = self.settings["db_name"]
