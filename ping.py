@@ -23,6 +23,7 @@ class Ping(threading.Thread):
         self.command_queue = command_queue
         self.ping_count = ping_count
 
+
     def run(self):
         '''Thread main function'''
         logger.debug("Ping thread STARTED")

@@ -38,31 +38,40 @@ class Sender(threading.Thread):
         messages=[]
         queue_size = self.event_queue.qsize()
 
-        # Warns of large queue
-        if queue_size > self.queue_warning_threshold:
-                logger.warning("Large queue: {}".format(queue_size))
-                self.queue_warnined = True
+        while True:
+            # Warns of large queue
+            if queue_size > self.queue_warning_threshold:
+                    logger.warning("Large queue: {}".format(queue_size))
+                    self.queue_warnined = True
 
-        while queue_size > 0:
-            logger.debug("Queue size: {}".format(queue_size))
+            while queue_size > 0:
+                logger.debug("Queue size: {}".format(queue_size))
 
-            item = self.event_queue.get()
-            message = copy.deepcopy(self.message_map(item))
-            # Adds message to a list to be sent
-            messages.append(message[0])
-            logger.info("New ping: {}".format(item))
+                item = self.event_queue.get()
+                message = copy.deepcopy(self.message_map(item))
+                # Adds message to a list to be sent
+                messages.append(message[0])
+                logger.info("New ping: {}".format(item))
 
-            # Checks if queue has any new events
-            queue_size = self.event_queue.qsize()
+                # Checks if queue has any new events
+                queue_size = self.event_queue.qsize()
 
-            # Warns if can't keep up
-            if queue_size > self.queue_warning_threshold and self.queue_warnined == False:
-                self.queue_warnined = True
-                logger.warning("Can't keep up. Large queue: {}".format(queue_size))
+                # Warns if can't keep up
+                if queue_size > self.queue_warning_threshold and self.queue_warnined == False:
+                    self.queue_warnined = True
+                    logger.warning("Can't keep up. Large queue: {}".format(queue_size))
 
-        self.queue_warnined = False               # Warning is reset
-        logger.debug("Sending")
-        self.send( messages )
+            else:
+                time.sleep(2)
+
+            self.queue_warnined = False               # Warning is reset
+            logger.debug("Sending")
+            self.send( messages )
+
+            cq_size = self.command_queue.qsize()
+            if cq_size > 0:
+                break
+
         logger.debug("Sender thread CLOSED")
 
 
