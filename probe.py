@@ -55,7 +55,7 @@ class Probe():
         self.body[0]["tags"]["id"] = self.id
 
         # Creates the threads
-        self.sender_thread = Sender(self.event_queue, self.body, self.db_name, self.db_user, self.db_password, self.host, self.port)
+        self.sender_thread = Sender(self.event_queue, self.command_queue, self.body, self.db_name, self.db_user, self.db_password, self.host, self.port)
         self.sender_thread.daemon=True
         self.ping_threads = []
         for ip in self.ip_list:

@@ -14,10 +14,11 @@ logger = Logger(__name__)
 class Sender(threading.Thread):
     '''A thread to send the ping analytics.'''
 
-    def __init__(self, event_queue, body, db_name, db_user, db_password, db_host, db_port, daemon=True):
+    def __init__(self, event_queue, command_queue, body, db_name, db_user, db_password, db_host, db_port, daemon=True):
 
         threading.Thread.__init__(self)
         self.event_queue = event_queue
+        self.command_queue = command_queue
         self.body = body
 
         # Configuration
@@ -35,10 +36,10 @@ class Sender(threading.Thread):
     def run(self):
         '''Thread main function'''
         logger.debug("Sender thread STARTED")
-        messages=[]
-        queue_size = self.event_queue.qsize()
 
         while True:
+            messages=[]
+            queue_size = self.event_queue.qsize()
             # Warns of large queue
             if queue_size > self.queue_warning_threshold:
                     logger.warning("Large queue: {}".format(queue_size))
@@ -62,7 +63,7 @@ class Sender(threading.Thread):
                     logger.warning("Can't keep up. Large queue: {}".format(queue_size))
 
             else:
-                time.sleep(2)
+                time.sleep(5)
 
             self.queue_warnined = False               # Warning is reset
             logger.debug("Sending")
