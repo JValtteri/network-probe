@@ -40,7 +40,7 @@ pip3 install -r requirements.txt
 
 ### Dependencies ###
 
-- **Python 3.5[*](https://github.com/JValtteri/network-probe#compatability)** or newer
+- **Python 3.5[*](https://github.com/JValtteri/network-probe#compatibility)** or newer
 - [InfluxDB Python HTTP API](https://github.com/influxdata/influxdb-python)
 
 ## Config ##
