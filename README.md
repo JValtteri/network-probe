@@ -16,7 +16,7 @@ This version is designed to work with ***Raspbian Stretch*** and ***Python 3.5**
 
 ## Features ##
 
-- pinging predefined adresses
+- pinging predefined addresses
 - crude network detection
 - logging to file
 - Config with config.json
@@ -80,11 +80,11 @@ First is the *name* of your probe and an *id*. These are used as *tags* in the d
 | `"db_port"`         | 8086 | Port used to connect to the InfluxDB |
 
 ### detection_depth: ###
-The probe can automatically ping devices on *path* to **1.1.1.1**. These devices may include your *router* and your *ISP* and other network infrasturcture. Can be used for a quick and dirty shotgun approech.
+The probe can automatically ping devices on *path* to **1.1.1.1**. These devices may include your **router**, your **ISP** and other network infrasturcture. Can be used for a quick and dirty [*shotgun approach*](https://en.wiktionary.org/wiki/shotgun_approach).
 
 Select the number of devices or *"hops"*, counting from the probe, you want to ping.
 
-Zero (0) disables this feature. Disabling is recommended for long deployments and multiple devices. The *path* may change between restarts and mess with your data. Different probes on the same network may get different *paths* which makes their data un-comparable.
+**Zero (0)** disables this feature. Disabling is recommended for long deployments and multiple devices. The *path* may change between restarts and mess with your data. Different probes on the same network may get different *paths* which makes their data un-comparable. See also [**notes on pinging the internet**](https://github.com/JValtteri/network-probe#notes-on-pinging-the-internet).
 
 ### Message template config ###
 
@@ -147,5 +147,5 @@ $ sytemctl stop network-probe
 
 ## Notes on Pinging the internet ##
 
-Note that pinging the same device or IP on any network may be interpreted by some firewalls as a [*DOS attack*](https://en.wikipedia.org/wiki/Denial-of-service_attack). In our experience, even Cloudflares **1.1.1.1** will start to **throttle** our pings after a day or two of pinging at a total *rate of ~3 pings per second* form the same IP.
+Note that pinging the same device or IP on any network may be interpreted by some firewalls as a [*DOS attack*](https://en.wikipedia.org/wiki/Denial-of-service_attack). In our experience, even Cloudflares **1.1.1.1** will start to **throttle** our pings after a day or two of pinging at a total *rate* of **~3 pings/s**, equivalent to six (6) devices on default settings, pinging from the same IP.
 Consider using internet [**root servers**](https://en.wikipedia.org/wiki/Root_name_server) as targets for longer or larger deployments.
