@@ -140,9 +140,9 @@ $ install-service.sh
 
 You can check the **status**, **restart** and **stop** the service with the following commands respectively.
 ```
-$ sytemctl status network-probe
-$ sytemctl restart network-probe
-$ sytemctl stop network-probe
+$ sudo sytemctl status network-probe
+$ sudo sytemctl restart network-probe
+$ sudo sytemctl stop network-probe
 ```
 
 ## Notes on Pinging the internet ##
