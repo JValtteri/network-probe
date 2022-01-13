@@ -6,10 +6,13 @@ Intended to be run on a ***Raspberry Pi*** connected to the target network. The 
 
 The target server is an **InfluxDB**. The data from multiple probes can be easily analyzed with [Grafana](https://grafana.com/), for example.
 
-### Compatability Notice: ###
-Older versions of ***Raspbian***, such as ***Raspbian 9 Stretch***, don't have ***Python 3.6***. **This version has legacy support for ***Python 3.5***.** This support, however **will be discontinued in the future.** In the future, you will need ***Python 3.6*** **or newer**.
+### Compatibility: ###
+> **Compatability Notice:**
+> 
+> **This version has legacy support for ***Python 3.5***.** This support, however **will be discontinued in the future.** In the future, you will need ***Python 3.6*** **or newer**.
+> Older versions of ***Raspbian***, such as ***Raspbian 9 Stretch***, don't have ***Python 3.6***. 
 
-This program is designed to work with ***Raspbian Stretch*** and newer and ***Windows***. Compatability with ***other Linux versions*** varies. It is dependent on the output of ```ping``` and ```traceroute``` commands.
+This version is designed to work with ***Raspbian Stretch*** and ***Python 3.5*** and newer and ***Windows***. Compatability with ***other Linux versions*** varies. It is dependent on the output of ```ping``` and ```traceroute``` commands.
 
 ## Features ##
 
@@ -19,19 +22,14 @@ This program is designed to work with ***Raspbian Stretch*** and newer and ***Wi
 - Config with config.json
   - see: example_config.json
 
-### In progress ###
-
-- [ ] production deployment
-- [x] ~~lots of testing~~
-
 ## Install ##
 
 ### Install Python 3 on Linux ###
 
 ```
-sudo apt-get update
-sudo apt-get install python3
-sudo apt-get install python3-pip
+$ sudo apt-get update
+$ sudo apt-get install python3
+$ sudo apt-get install python3-pip
 ```
 
 ### Install dependencies ###
@@ -42,7 +40,7 @@ pip3 install -r requirements.txt
 
 ### Dependencies ###
 
-- **Python 3.5*** or newer
+- **Python 3.5[*](https://github.com/JValtteri/network-probe#compatability)** or newer
 - [InfluxDB Python HTTP API](https://github.com/influxdata/influxdb-python)
 
 ## Config ##
@@ -73,7 +71,7 @@ First is the *name* of your probe and an *id*. These are used as *tags* in the d
 | ----------------- | - | ------------------ |
 | `"time_interval"`   | 2 | Time between pings |
 | `"ping_count"`      | 1 | Times to ping per test |
-| `"detection_depth"` | 3 | How meny hops from the probe are added to ping list |
+| `"detection_depth"` | 0 | How meny hops from the probe are added to ping list |
 | `"event_queue"`     | 15000 | How meny pings are buffered if network is interrupted. |
 | `"db_name"`         | "db" | The InfluxDB name |
 | `"db_user"`         | "user" | Username to log in to the InfluxDB |
@@ -81,6 +79,12 @@ First is the *name* of your probe and an *id*. These are used as *tags* in the d
 | `"db_host"`         | "localhost" | the address to the InfluxDB. ```!! omit 'https:\\' !!``` |
 | `"db_port"`         | 8086 | Port used to connect to the InfluxDB |
 
+### detection_depth: ###
+The probe can automatically ping devices on *path* to **1.1.1.1**. These devices may include your *router* and your *ISP* and other network infrasturcture. Can be used for a quick and dirty shotgun approech.
+
+Select the number of devices or *"hops"*, counting from the probe, you want to ping.
+
+Zero (0) disables this feature. Disabling is recommended for long deployments and multiple devices. The *path* may change between restarts and mess with your data. Different probes on the same network may get different *paths* which makes their data un-comparable.
 
 ### Message template config ###
 
@@ -121,7 +125,7 @@ stop with ```Ctrl``` + ```C```
 
 **Assuming** 
 - the OS **Raspbian Linux** and 
-- user the **Pi** (raspbian default user)
+- user the **pi** (raspbian default user)
 
 If you have not yet done so, clone network-probe to Pi home directory: 
 ```
@@ -131,5 +135,17 @@ git clone https://github.com/JValtteri/network-probe.git
 
 **Run** 
 ```
-install-service.sh
+$ install-service.sh
 ```
+
+You can check the **status**, **restart** and **stop** the service with the following commands respectively.
+```
+$ sytemctl status network-probe
+$ sytemctl restart network-probe
+$ sytemctl stop network-probe
+```
+
+## Notes on Pinging the internet ##
+
+Note that pinging the same device or IP on any network may be interpreted by some firewalls as a [*DOS attack*](https://en.wikipedia.org/wiki/Denial-of-service_attack). In our experience, even Cloudflares **1.1.1.1** will start to **throttle** our pings after a day or two of pinging at a total *rate of ~3 pings per second* form the same IP.
+Consider using internet [**root servers**](https://en.wikipedia.org/wiki/Root_name_server) as targets for longer or larger deployments.
